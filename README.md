@@ -51,7 +51,7 @@
 Склонируйте репозиторий с помощью Git:
 
 ```bash
-[git clone https://github.com/Alexwwww228/CodingCrypto.git](https://github.com/Alexwww228/CodingCrypto.git)
+git clone https://github.com/Alexwww228/CodingCrypto.git
 ```
 
 ## Использование
