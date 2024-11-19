@@ -1,0 +1,119 @@
+* {
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        margin: 20px;
+    }
+
+    button {
+        width: 100%; /* Кнопки занимают всю ширину */
+        margin: 5px 0; /* Убираем боковые отступы */
+    }
+
+    .tab-button {
+        width: auto; /* Автоматическая ширина для мобильных устройств */
+    }
+}
+
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Светлый фон для всего документа */
+    color: #333;
+}
+
+.container {
+    max-width: 780px; /* Максимальная ширина контейнера */
+    margin: 50px auto; /* Центрирование контейнера с верхним отступом */
+    padding: 30px; /* Внутренний отступ */
+    background-color: #ffffff; /* Белый фон контейнера */
+    border-radius: 10px; /* Скругление углов */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Тень для контейнера */
+}
+
+h1, h2 {
+    text-align: center; /* Выравнивание заголовка по центру */
+    color: #007bff; /* Синий цвет заголовка */
+    margin-bottom: 30px; /* Отступ снизу */
+}
+
+.button-container {
+    text-align: center; /* Центрирование кнопок */
+    margin-bottom: 20px; /* Отступ снизу */
+}
+
+.tab-button {
+    border: 1px solid transparent;
+    background-color: #007bff; /* Светлый фон для неактивной кнопки */
+    color: white; /* Синий текст */
+}
+
+.tab-button.active {
+    background-color: #014185; /* Синий фон для активной кнопки */
+    color: white; /* Белый текст */
+    border: 1px solid #0056b3; /* Темно-синяя граница */
+}
+
+.menu {
+    margin-top: 20px; /* Отступ сверху */
+    padding: 20px; /* Внутренний отступ */
+    border-radius: 8px; /* Скругление углов */
+    background-color: #f8f9fa; /* Светло-серый фон для меню */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Тень для меню */
+    transition: transform 0.2s; /* Плавный переход для эффекта наведения */
+}
+
+.menu:hover {
+    transform: translateY(-2px); /* Эффект поднятия при наведении */
+}
+
+button {
+    background-color: #007bff; /* Синий цвет кнопки */
+    color: white; /* Белый текст на кнопке */
+    border: none; /* Убираем границу */
+    padding: 12px 20px; /* Внутренний отступ кнопки */
+    margin: 10px; /* Отступ между кнопками */
+    border-radius: 5px; /* Скругление углов кнопок */
+    cursor: pointer; /* Курсор при наведении */
+    font-size: 16px; /* Размер шрифта кнопки */
+    transition: background-color 0.3s, transform 0.2s; /* Плавный переход для фона и эффекта нажатия */
+}
+
+.crypto-button{
+    width: 200px; /* Установка фиксированной ширины для всех кнопок */
+}
+
+button:hover {
+    background-color: #0056b3; /* Темнее при наведении */
+    transform: translateY(-1px); /* Эффект при наведении */
+}
+
+button:active {
+    transform: translateY(1px); /* Эффект нажатия */
+}
+
+
+p {
+    margin-top: 10px; /* Отступ сверху */
+    color: #555; /* Цвет текста */
+    font-weight: bold; /* Жирный текст */
+}
+
+
+.key-display {
+    padding: 12px;
+    border-radius: 5px;
+    background-color: #f4f4f4;
+    text-align: center;
+    font-weight: bold;
+    word-wrap: break-word; /* Разбивает длинные строки */
+}
+
+.crypto {
+    text-align: center;
+}
