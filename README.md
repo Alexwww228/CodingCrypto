@@ -23,17 +23,17 @@
 ### 1. **RSA Шифрование**
 - Генерация публичного и приватного ключа RSA.
 - Шифрование и дешифрование файлов с использованием RSA.
-![alt text](RSA.png)
+![RSA](https://github.com/Alexwww228/CodingCrypto/img/RSA.png)
 
 ### 2. **AES Шифрование**
 - Генерация ключа для алгоритма AES.
 - Шифрование и дешифрование файлов с использованием AES.
-![alt text](AES.png)
+![AES]([img/AES.png](https://github.com/Alexwww228/CodingCrypto/img/AES.png))
 
 ### 3. **XOR Шифрование**
 - Генерация случайного ключа для XOR.
 - Шифрование и дешифрование текстовых файлов с использованием XOR.
-![alt text](XOR.png)
+![XOR]([img/XOR.png](https://github.com/Alexwww228/CodingCrypto/img/XOR.png))
 
 ### 4. **Генерация ключей**
 - Для каждого алгоритма (RSA, AES, XOR) реализована возможность генерации ключей нужной длины.
