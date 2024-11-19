@@ -70,10 +70,10 @@ git clone https://github.com/Alexwwww228/encryption.git
 
 ## Структура проекта
 
-[index.html](https://pages.github.com/) — основной HTML файл с разметкой интерфейса приложения.
-[style.css](https://pages.github.com/) — файл с CSS-стилями для оформления страницы.
-[scripts/](https://pages.github.com/)
-    [rsa.js](https://pages.github.com/) — скрипт для генерации ключей и шифрования/дешифрования с использованием алгоритма RSA.
-    [aes.js](https://pages.github.com/) — скрипт для генерации ключа и работы с алгоритмом AES.
-    [xor.js](https://pages.github.com/) — скрипт для генерации ключа и работы с алгоритмом XOR.
-README.md — этот файл, который описывает проект и его функциональность.
+- [index.html](https://pages.github.com/) — основной HTML файл с разметкой интерфейса приложения.
+- [style.css](https://pages.github.com/) — файл с CSS-стилями для оформления страницы.
+- [scripts/](https://pages.github.com/)
+    - [rsa.js](https://pages.github.com/) — скрипт для генерации ключей и шифрования/дешифрования с использованием алгоритма RSA.
+    - [aes.js](https://pages.github.com/) — скрипт для генерации ключа и работы с алгоритмом AES.
+    - [xor.js](https://pages.github.com/) — скрипт для генерации ключа и работы с алгоритмом XOR.
+- README.md — этот файл, который описывает проект и его функциональность.
