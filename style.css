@@ -1,119 +1,544 @@
+/* Основные стили страницы в темной теме */
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
-
-@media (max-width: 768px) {
-    .container {
-        padding: 20px;
-        margin: 20px;
-    }
-
-    button {
-        width: 100%; /* Кнопки занимают всю ширину */
-        margin: 5px 0; /* Убираем боковые отступы */
-    }
-
-    .tab-button {
-        width: auto; /* Автоматическая ширина для мобильных устройств */
-    }
-}
-
 
 body {
     font-family: 'Arial', sans-serif;
-    margin: 0;
+    background-color: #121212; /* Темный фон */
+    color: #e0e0e0; /* Светлый текст */
+    line-height: 1.6;
     padding: 0;
-    background-color: #f4f4f4; /* Светлый фон для всего документа */
-    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .container {
-    max-width: 780px; /* Максимальная ширина контейнера */
-    margin: 50px auto; /* Центрирование контейнера с верхним отступом */
-    padding: 30px; /* Внутренний отступ */
-    background-color: #ffffff; /* Белый фон контейнера */
-    border-radius: 10px; /* Скругление углов */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Тень для контейнера */
+    max-width: 850px; /* Увеличиваем ширину контейнера */
+    margin: 30px auto;
+    padding: 25px;
+    background-color: #1e1e1e; /* Темно-серый фон */
+    border-radius: 12px;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
 }
 
-h1, h2 {
-    text-align: center; /* Выравнивание заголовка по центру */
-    color: #007bff; /* Синий цвет заголовка */
-    margin-bottom: 30px; /* Отступ снизу */
+h1, h2, h3 {
+    text-align: center;
+    color: #4cbbff; /* Яркий голубой для заголовков */
+    margin-bottom: 25px;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.button-container {
-    text-align: center; /* Центрирование кнопок */
-    margin-bottom: 20px; /* Отступ снизу */
+h1 {
+    font-size: 2.2rem;
+    margin-top: 0;
+    background: linear-gradient(45deg, #4cbbff, #2979ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 1.8rem;
+    margin-top: 20px;
+}
+
+/* Улучшенные стили для вкладок */
+.tab-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 30px;
+    background-color: #252525;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
 .tab-button {
-    border: 1px solid transparent;
-    background-color: #007bff; /* Светлый фон для неактивной кнопки */
-    color: white; /* Синий текст */
+    padding: 12px 16px;
+    border: none;
+    background-color: #2962ff; /* Синий цвет */
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    outline: none;
+}
+
+.tab-button:hover {
+    background-color: #1a54f7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .tab-button.active {
-    background-color: #014185; /* Синий фон для активной кнопки */
-    color: white; /* Белый текст */
-    border: 1px solid #0056b3; /* Темно-синяя граница */
+    background-color: #0039cb; /* Темно-синий */
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(41, 98, 255, 0.4);
 }
 
-.menu {
-    margin-top: 20px; /* Отступ сверху */
-    padding: 20px; /* Внутренний отступ */
-    border-radius: 8px; /* Скругление углов */
-    background-color: #f8f9fa; /* Светло-серый фон для меню */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Тень для меню */
-    transition: transform 0.2s; /* Плавный переход для эффекта наведения */
+.tab-content {
+    background-color: #252525;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
 }
 
-.menu:hover {
-    transform: translateY(-2px); /* Эффект поднятия при наведении */
-}
-
+/* Улучшенные стили для кнопок */
 button {
-    background-color: #007bff; /* Синий цвет кнопки */
-    color: white; /* Белый текст на кнопке */
-    border: none; /* Убираем границу */
-    padding: 12px 20px; /* Внутренний отступ кнопки */
-    margin: 10px; /* Отступ между кнопками */
-    border-radius: 5px; /* Скругление углов кнопок */
-    cursor: pointer; /* Курсор при наведении */
-    font-size: 16px; /* Размер шрифта кнопки */
-    transition: background-color 0.3s, transform 0.2s; /* Плавный переход для фона и эффекта нажатия */
-}
-
-.crypto-button{
-    width: 200px; /* Установка фиксированной ширины для всех кнопок */
+    background-color: #2962ff;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    margin: 8px 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    outline: none;
 }
 
 button:hover {
-    background-color: #0056b3; /* Темнее при наведении */
-    transform: translateY(-1px); /* Эффект при наведении */
+    background-color: #1a54f7;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
 
 button:active {
-    transform: translateY(1px); /* Эффект нажатия */
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-
-p {
-    margin-top: 10px; /* Отступ сверху */
-    color: #555; /* Цвет текста */
-    font-weight: bold; /* Жирный текст */
+.crypto-button {
+    width: 200px;
+    background-color: #0066cc;
+    margin-top: 12px;
 }
 
+.generateKey {
+    background-color: #00866e; /* Зеленый цвет для кнопки генерации ключа */
+    width: 200px;
+}
 
+.generateKey:hover {
+    background-color: #006e5a;
+}
+
+/* Стили для отображения ключа */
 .key-display {
-    padding: 12px;
-    border-radius: 5px;
-    background-color: #f4f4f4;
+    background-color: #2d2d2d;
+    color: #4cbbff;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.9rem;
     text-align: center;
-    font-weight: bold;
-    word-wrap: break-word; /* Разбивает длинные строки */
+    word-wrap: break-word;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid #383838;
+    max-height: none;
+    overflow-y: visible;
+    transition: all 0.3s ease;
 }
 
+.key-display:hover {
+    background-color: #333333;
+}
+
+/* Улучшенные стили для инпутов */
+input[type="file"],
+input[type="number"],
+select {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+    border: 1px solid #444;
+    padding: 10px 15px;
+    margin: 8px 0;
+    border-radius: 6px;
+    width: 100%;
+    max-width: 300px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+input[type="file"]::file-selector-button,
+input[type="file"]::-webkit-file-upload-button {
+    background-color: #444;
+    color: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+input[type="file"]::file-selector-button:hover,
+input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: #555;
+}
+
+input[type="number"],
+select {
+    padding: 10px;
+    width: 150px;
+}
+
+label {
+    display: inline-block;
+    margin: 10px 0 5px;
+    color: #b0b0b0;
+}
+
+/* Центрирование элементов внутри табов */
 .crypto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+}
+
+/* Стили для индикатора загрузки */
+#loadingIndicator {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #333;
+    border-top: 5px solid #2962ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#loadingText {
+    color: #4cbbff;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+#loadingContainer {
+    text-align: center;
+    margin: 30px 0;
+}
+
+/* Стили для отображения статистики */
+.stats-display {
+    background-color: #2d2d2d;
+    color: #b0b0b0;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 0.9rem;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
+    border-left: 4px solid #2962ff;
+    max-height: none;
+    overflow-y: visible;
+}
+
+/* Стили для страницы сравнения */
+.comparison-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Стили для таблицы сравнения */
+.comparison-container {
+    padding: 20px;
+    max-width: 100%;
+    margin-top: 20px;
+    background-color: #252525;
+    border-radius: 8px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.comparison-table thead tr {
+    background-color: #2962ff;
+    color: white;
+    text-align: left;
+    font-weight: bold;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+}
+
+.comparison-table tbody tr {
+    background-color: #2d2d2d;
+    transition: all 0.3s ease;
+}
+
+.comparison-table tbody tr:hover {
+    background-color: #333333;
+}
+
+/* Выделение быстрых и медленных алгоритмов */
+.comparison-table tr.fastest {
+    background-color: #1c3b1f;
+}
+
+.comparison-table tr.fastest:hover {
+    background-color: #224626;
+}
+
+.comparison-table tr.slowest {
+    background-color: #3b2e1c;
+}
+
+.comparison-table tr.slowest:hover {
+    background-color: #46392c;
+}
+
+/* Бейдж для самого быстрого алгоритма */
+.badge {
+    background-color: #00b020;
+    color: white;
+    font-size: 0.7rem;
+    padding: 3px 6px;
+    border-radius: 10px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+/* Информационный блок с описанием метрик */
+.info-box {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #2d2d2d;
+    border-radius: 8px;
+    border-left: 4px solid #2962ff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.info-box h3 {
+    margin-top: 0;
+    color: #4cbbff;
+    font-size: 1.2rem;
+}
+
+.metrics-description {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.metric {
+    padding: 15px;
+    background-color: #333333;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.metric h4 {
+    margin-top: 0;
+    color: #8fcaff;
+    font-size: 1rem;
+}
+
+.metric p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    color: #bbbbbb;
+    line-height: 1.5;
+}
+
+/* Упрощенный график производительности */
+.simple-chart {
+    margin: 30px 0;
+    padding: 20px;
+    background-color: #2d2d2d;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.simple-chart h4 {
+    margin-top: 0;
+    text-align: center;
+    color: #c0c0c0;
+}
+
+.chart-description {
+    font-size: 0.9rem;
+    color: #a0a0a0;
+    margin-bottom: 15px;
+}
+
+.performance-chart {
+    margin-top: 20px;
+}
+
+.perf-bar-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.perf-label {
+    width: 100px;
+    text-align: right;
+    padding-right: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #c0c0c0;
+}
+
+.perf-bar-wrap {
+    flex-grow: 1;
+    background-color: #444444;
+    height: 20px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.perf-bar {
+    height: 100%;
+    background-color: #2962ff;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.perf-value {
+    width: 80px;
+    padding-left: 10px;
+    font-size: 0.9rem;
+    color: #a0a0a0;
+}
+
+/* Блок с выводами */
+.summary-info {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #2d2d2d;
+    border-radius: 8px;
+    border-left: 4px solid #00b020;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.summary-info h4 {
+    margin-top: 0;
+    color: #00b020;
+}
+
+.summary-info ul {
+    padding-left: 20px;
+    color: #c0c0c0;
+}
+
+.summary-info li {
+    margin-bottom: 8px;
+}
+
+.recommendation {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #333333;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #bbbbbb;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .container {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .tab-container {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .tab-button {
+        width: 100%;
+    }
+
+    .comparison-table {
+        font-size: 0.85rem;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+        padding: 8px 10px;
+    }
+
+    .metrics-description {
+        grid-template-columns: 1fr;
+    }
+
+    .perf-bar-container {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .perf-label {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 5px;
+    }
+
+    .perf-bar-wrap {
+        width: 100%;
+    }
+
+    .perf-value {
+        width: 100%;
+        text-align: right;
+        padding-left: 0;
+        margin-top: 5px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    button {
+        width: 100%;
+        margin: 5px 0;
+    }
 }

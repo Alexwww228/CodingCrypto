@@ -11,26 +11,29 @@
         <h1>Шифрование и Дешифрование</h1>
 
         <div class="tab-container">
-            <button class="tab-button" onclick="showTab('rsa')">RSA</button>
+            <button class="tab-button" onclick="showTab('ecc')">ECC</button>
             <button class="tab-button" onclick="showTab('aes')">AES</button>
             <button class="tab-button" onclick="showTab('xor')">XOR</button>
-            <button class="tab-button" onclick="showTab('method4')">Метод 4</button>
+            <button class="tab-button" onclick="showTab('3des')">3DES</button>
+            <button class="tab-button" onclick="showTab('blowfish')">BlowFish</button>
+            <button class="tab-button" onclick="showTab('complex')">Мой метод</button>
             <button class="tab-button" onclick="showTab('comparison')">Сравнение</button>
         </div>
 
-        <div id="RSA" class="crypto">
-            <script src="scripts/rsa.js" defer></script>
-            <div id="rsa" class="tab-content" style="display: block;">
-                <h2>RSA Шифрование</h2>
+        <div id="ECC" class="crypto">
+            <script src="scripts/ecc.js" defer></script>
+            <div id="ecc" class="tab-content" style="display: block;">
+                <h2>ECC Шифрование</h2>
                 <div>
-                    <button class="generateKey" onclick="generateRSAKeys()">Сгенерировать ключи</button>
-                    <div id="keyRSA" class="key-display"></div>
-                    
-                    <input type="file" id="fileToEncryptRSA">
-                    <button class="crypto-button" onclick="encryptRSA()">Шифровать файл</button>
-                    <input type="file" id="fileToDecryptRSA">
-                    <button class="crypto-button" onclick="decryptRSA()">Расшифровать файл</button>
-                    
+                    <button class="generateKey" onclick="generateECCKeys()">Сгенерировать ключи</button>
+                    <div id="keyECC" class="key-display"></div>
+        
+                    <input type="file" id="fileToEncryptECC">
+                    <button class="crypto-button" onclick="encryptECC()">Шифровать файл</button>
+                    <input type="file" id="fileToDecryptECC">
+                    <button class="crypto-button" onclick="decryptECC()">Расшифровать файл</button>
+        
+                    <div id="eccStats" class="stats-display"></div>
                 </div>
             </div>
         </div>
@@ -42,11 +45,13 @@
                 <div>
                     <button class="generateKey" onclick="generateAESKey()">Сгенерировать ключ</button>
                     <div id="keyAES" class="key-display"></div>
-                    
+            
                     <input type="file" id="fileToEncryptAES">
                     <button class="crypto-button" onclick="encryptAES()">Шифровать файл</button>
                     <input type="file" id="fileToDecryptAES">
                     <button class="crypto-button" onclick="decryptAES()">Расшифровать файл</button>
+            
+                    <div id="aesStats" class="stats-display"></div>
                 </div>
             </div>
         </div>
@@ -60,29 +65,94 @@
                     <input type="number" id="length" value="64" min="16" max="128" />
                     <br><br>
                     <button class="generateKey" onclick="generateXORKey(parseInt(document.getElementById('length').value))">Сгенерировать ключ</button>
-                    <div id="keyXOR" class="key-display">Сгенерированный ключ: </div>
+                    <div id="keyXOR" class="key-display"></div>
                     
                     <input type="file" id="fileToEncryptXOR">
                     <button class="crypto-button" onclick="encryptXOR()">Шифровать файл</button>
                     <input type="file" id="fileToDecryptXOR">
                     <button class="crypto-button" onclick="decryptXOR()">Расшифровать файл</button>
+                    
+                    <div id="xorStats" class="stats-display"></div>
                 </div>
             </div>
         </div>
 
-        <!--<div id="method4" class="tab-content" style="display: none;">
-            <h2>Метод шифрования 4</h2>
-            <textarea id="method4Message" placeholder="Введите сообщение для метода 4" rows="5"></textarea>
-            <button onclick="method4Encrypt()">Зашифровать методом 4</button>
-            <p id="method4Result"></p>
+        <div id="3DES" class="crypto">
+            <script src="scripts/3des.js" defer></script>
+            <div id="3des" class="tab-content" style="display: none;">
+                <h2>3DES Шифрование</h2>
+                <div>
+                    <button class="generateKey" onclick="generate3DESKey()">Сгенерировать ключ</button>
+                    <div id="key3DES" class="key-display"></div>
+                    
+                    <input type="file" id="fileToEncrypt3DES">
+                    <button class="crypto-button" onclick="encrypt3DES()">Шифровать файл</button>
+                    <input type="file" id="fileToDecrypt3DES">
+                    <button class="crypto-button" onclick="decrypt3DES()">Расшифровать файл</button>
+                    
+                    <div id="3desStats" class="stats-display"></div>
+                </div>
+            </div>
         </div>
 
+        <div id="BlowFish" class="crypto">
+            <script src="scripts/blowfish.js" defer></script>
+            <div id="blowfish" class="tab-content" style="display: none;">
+                <h2>Blowfish Шифрование</h2>
+                <div>
+                    <label for="keyLength">Длина ключа (бит):</label>
+                    <select id="keyLength">
+                        <option value="32">32 бита</option>
+                        <option value="64">64 бита</option>
+                        <option value="128">128 бит</option>
+                        <option value="256">256 бит</option>
+                        <option value="448">448 бит</option>
+                    </select>
+                    <button class="generateKey" onclick="generateBlowfishKey()">Сгенерировать ключ</button>
+                    <div id="keyBlowfish" class="key-display"></div>
+                    
+                    <input type="file" id="fileToEncryptBlowfish">
+                    <button class="crypto-button" onclick="encryptBlowfish()">Шифровать файл</button>
+                    <input type="file" id="fileToDecryptBlowfish">
+                    <button class="crypto-button" onclick="decryptBlowfish()">Расшифровать файл</button>
+                    
+                    <div id="blowfishStats" class="stats-display"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="Complex" class="crypto">
+            <script src="scripts/mycrypt.js" defer></script>
+            <div id="complex" class="tab-content" style="display: none;">
+                <h2>Мой метод шифрования</h2>
+                <div>
+                    <button class="generateKey" onclick="generateComplexKey()">Сгенерировать ключ</button>
+                    <div id="keyComplex" class="key-display"></div>
+                    
+                    <input type="file" id="fileToEncryptComplex">
+                    <button class="crypto-button" onclick="encryptComplex()">Шифровать файл</button>
+                    <input type="file" id="fileToDecryptComplex">
+                    <button class="crypto-button" onclick="decryptComplex()">Расшифровать файл</button>
+                    
+                    <div id="complexStats" class="stats-display"></div>
+                </div>
+            </div>
+        </div>
+        
+
         <div id="comparison" class="tab-content" style="display: none;">
-            <h2>Сравнение методов</h2>
-            <textarea id="comparisonMessage" placeholder="Введите сообщение для метода 5" rows="5"></textarea>
-            <button onclick="method5Encrypt()">Зашифровать методом 5</button>
-            <p id="comparisonResult"></p>
-        </div>-->
+            <script src="scripts/comparison.js" defer></script>
+            <h2>Сравнение методов шифрования</h2>
+            <div class="comparison-controls">
+            <input type="file" id="comparisonFile">
+                <button id="compareButton" class="crypto-button">Сравнить алгоритмы</button>
+            </div>
+            <div id="loadingContainer">
+                <div id="loadingIndicator"></div>
+                <p id="loadingText" style="display: none; text-align: center;">Выполняется сравнение алгоритмов...</p>
+            </div>
+            <div id="comparisonResult"></div>
+        </div>
     </div>
 
     <script>
@@ -97,7 +167,6 @@
             document.getElementById(tabId).style.display = 'block';
             document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('active');
         }
-
     </script>
 </body>
 </html>
