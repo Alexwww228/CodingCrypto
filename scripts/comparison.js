@@ -5,7 +5,7 @@ const keyInformation = {
     "ECC": { bits: 256, description: "эллиптические кривые" },
     "AES": { bits: 256, description: "симметричный блочный шифр" },
     "XOR": { bits: 64, description: "простая операция XOR" },
-    "3DES": { bits: 168, description: "тройной DES" },
+    "3DES": { bits: 256, description: "тройной DES" },
     "Blowfish": { bits: 448, description: "симметричный блочный шифр" },
     "Complex": { bits: 512, description: "комбинированный метод" }
 };

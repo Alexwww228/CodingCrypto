@@ -2,8 +2,8 @@ class ComplexBlockCipher {
     constructor() {
         this.key = null;
         this.blockSize = 32;
-        this.rounds = 3; // Уменьшаем число раундов для ускорения
-        this.roundKeyCache = new Map(); // Кеш для ключей раундов
+        this.rounds = 3; 
+        this.roundKeyCache = new Map(); 
         this.stats = {
             steps: 0,
             timeStart: 0,
@@ -181,7 +181,7 @@ class ComplexBlockCipher {
 
     // Быстрое разделение на блоки с правильным дополнением
     splitIntoBlocks(bytes) {
-        const blocksCount = Math.ceil(bytes.length / this.blockSize) + (bytes.length % this.blockSize === 0 ? 1 : 0);
+        const blocksCount = Math.ceil(bytes.length / this.blockSize);
         const blocks = new Array(blocksCount);
         
         // Обрабатываем полные блоки
@@ -199,17 +199,12 @@ class ComplexBlockCipher {
             // Если блок неполный, добавляем padding
             if (remainingBytes < this.blockSize) {
                 const paddingSize = this.blockSize - remainingBytes;
-                block.fill(paddingSize, remainingBytes);
+                for (let j = 0; j < paddingSize; j++) {
+                    block[remainingBytes + j] = paddingSize;
+                }
             }
             
             blocks[blockIndex] = block;
-        }
-        
-        // Добавляем дополнительный блок, если данные кратны размеру блока
-        if (bytes.length % this.blockSize === 0) {
-            const paddingBlock = new Uint8Array(this.blockSize);
-            paddingBlock.fill(this.blockSize);
-            blocks[blocks.length - 1] = paddingBlock;
         }
         
         return blocks;
@@ -223,10 +218,16 @@ class ComplexBlockCipher {
             const len = data.length;
             const step = 4; // Обрабатываем по 4 байта для ускорения
             
-            // Обрабатываем данные блоками по 4 байта
-            for (let i = 0; i < len - step; i += step) {
-                checksum = (checksum + ((data[i] << 24) | (data[i+1] << 16) | (data[i+2] << 8) | data[i+3])) >>> 0;
-            this.stats.steps++;
+            // Проверяем, есть ли у нас хотя бы 4 байта для основной обработки
+            if (len >= step) {
+                // Обрабатываем данные блоками по 4 байта, учитывая возможную неравномерность массива
+                for (let i = 0; i < len - (len % step); i += step) {
+                    // Битовая сборка значения из 4 байтов с учетом смещения
+                    if (i + 3 < len) {
+                        checksum = (checksum + ((data[i] << 24) | (data[i+1] << 16) | (data[i+2] << 8) | data[i+3])) >>> 0;
+                    }
+                    this.stats.steps++;
+                }
             }
             
             // Обрабатываем оставшиеся байты
@@ -249,7 +250,7 @@ class ComplexBlockCipher {
             return this.fastChecksum(combinedData);
         }
         
-        // Завершающий шаг для улучшения распределения битов
+        // Завершающий шаг для улучшения распределения битов (FNV-1a подобный алгоритм)
         checksum = ((checksum ^ (checksum >>> 16)) * 0x85ebca6b) >>> 0;
         checksum = ((checksum ^ (checksum >>> 13)) * 0xc2b2ae35) >>> 0;
         checksum = (checksum ^ (checksum >>> 16)) >>> 0;
@@ -257,89 +258,110 @@ class ComplexBlockCipher {
         return checksum;
     }
 
-    // Объединение блоков и вычисление контрольной суммы (оптимизированное)
+    // Объединение блоков и добавление контрольной суммы
     combineBlocks(blocks) {
-        // Общая длина = сумма длин всех блоков + 4 байта для контрольной суммы
-        const totalLength = blocks.reduce((sum, block) => sum + block.length, 0);
-        const result = new Uint8Array(totalLength + 4);
-        
-        // Создаем DataView для быстрой работы с байтами
-        const dataView = new DataView(result.buffer);
-        let offset = 0;
+        // Находим общую длину данных
+        const dataLength = blocks.reduce((total, block) => total + block.length, 0);
+        const result = new Uint8Array(dataLength + 4); // +4 для контрольной суммы
         
         // Копируем блоки в результирующий массив
+        let offset = 0;
+        for (let i = 0; i < blocks.length; i++) {
+            this.stats.steps++;
+            const block = blocks[i];
+            result.set(block, offset);
+            offset += block.length;
+        }
+        
+        // Извлекаем данные без padding для контрольной суммы
+        const dataForChecksum = this.removePadding(blocks);
+        
+        // Вычисляем контрольную сумму
+        const checksum = this.fastChecksum(dataForChecksum);
+        
+        // Добавляем контрольную сумму в конец массива
+        const view = new DataView(result.buffer, result.byteOffset, result.byteLength);
+        view.setUint32(offset, checksum, true); // Little-endian
+        
+        return result;
+    }
+
+    // Удаление padding из блоков данных
+    removePadding(blocks) {
+        // Проверка на пустые данные или некорректный формат
+        if (!blocks || !blocks.length) {
+            return new Uint8Array(0);
+        }
+        
+        // Копируем блоки, кроме последнего
+        const processedBlocks = blocks.slice(0, -1);
+        const lastBlock = blocks[blocks.length - 1];
+        
+        // Проверка на корректность последнего блока
+        if (!lastBlock || lastBlock.length !== this.blockSize) {
+            // Если последний блок неполный или отсутствует, возвращаем все блоки как есть
+            return this._combinePaddedBlocks(blocks);
+        }
+        
+        // Проверяем последний байт в последнем блоке для определения размера padding
+        const paddingSize = lastBlock[this.blockSize - 1];
+        
+        // Проверяем валидность padding
+        if (paddingSize > 0 && paddingSize <= this.blockSize) {
+            // Дополнительная проверка: все байты padding должны иметь одинаковое значение
+            let isPaddingValid = true;
+            for (let i = this.blockSize - paddingSize; i < this.blockSize; i++) {
+                if (lastBlock[i] !== paddingSize) {
+                    isPaddingValid = false;
+                    break;
+                }
+            }
+            
+            if (isPaddingValid) {
+                // Копируем часть последнего блока без padding
+                const processedLastBlock = lastBlock.slice(0, this.blockSize - paddingSize);
+                processedBlocks.push(processedLastBlock);
+            } else {
+                // Если padding некорректный, сохраняем блок как есть
+                processedBlocks.push(lastBlock);
+            }
+        } else {
+            // Если padding некорректный, сохраняем блок как есть
+            processedBlocks.push(lastBlock);
+        }
+        
+        // Вычисляем общую длину данных
+        const totalLength = processedBlocks.reduce((total, block) => total + block.length, 0);
+        const result = new Uint8Array(totalLength);
+        
+        // Копируем все блоки в результирующий массив
+        let offset = 0;
+        for (let i = 0; i < processedBlocks.length; i++) {
+            this.stats.steps++;
+            const block = processedBlocks[i];
+            result.set(block, offset);
+            offset += block.length;
+        }
+        
+        return result;
+    }
+    
+    // Вспомогательный метод для объединения блоков без удаления padding
+    _combinePaddedBlocks(blocks) {
+        const totalLength = blocks.reduce((total, block) => total + block.length, 0);
+        const result = new Uint8Array(totalLength);
+        
+        let offset = 0;
         for (let i = 0; i < blocks.length; i++) {
             const block = blocks[i];
             result.set(block, offset);
             offset += block.length;
         }
         
-        // Создаем общий массив данных без padding для контрольной суммы
-        const dataForChecksum = this.removePadding(blocks);
-        
-        // Вычисляем контрольную сумму с использованием быстрого алгоритма
-        const checksum = this.fastChecksum(dataForChecksum);
-        
-        // Записываем контрольную сумму в конец
-        dataView.setUint32(offset, checksum, true);
-        
         return result;
     }
 
-    // Улучшенное удаление padding для повышения производительности
-    removePadding(blocks) {
-        if (blocks.length === 0) return new Uint8Array(0);
-        
-        // Создаем копию массива блоков для работы
-        const processedBlocks = blocks.slice();
-        const lastBlock = processedBlocks[processedBlocks.length - 1];
-        
-        // Быстрая проверка последнего байта
-        const lastByte = lastBlock[this.blockSize - 1];
-        
-        // Проверка на полный блок padding
-        if (lastByte === this.blockSize) {
-            // Проверяем первые несколько байтов для оптимизации
-            if (lastBlock[0] === this.blockSize && 
-                lastBlock[1] === this.blockSize &&
-                lastBlock[2] === this.blockSize) {
-                // Вероятно, это полный padding блок - удаляем его
-                processedBlocks.pop();
-            }
-        } 
-        // Проверка на частичный padding
-        else if (lastByte > 0 && lastByte <= this.blockSize) {
-            // Проверяем несколько последних байтов для быстрой проверки
-            let isValidPadding = true;
-            const paddingStart = this.blockSize - lastByte;
-            
-            for (let i = this.blockSize - 1; i >= paddingStart; i--) {
-                if (lastBlock[i] !== lastByte) {
-                    isValidPadding = false;
-                    break;
-                }
-            }
-            
-            if (isValidPadding) {
-                // Обрезаем padding в последнем блоке
-                processedBlocks[processedBlocks.length - 1] = lastBlock.slice(0, paddingStart);
-            }
-        }
-        
-        // Эффективное объединение массивов с предварительным выделением памяти
-        const totalLength = processedBlocks.reduce((sum, block) => sum + block.length, 0);
-        const result = new Uint8Array(totalLength);
-        let offset = 0;
-        
-        for (let i = 0; i < processedBlocks.length; i++) {
-            result.set(processedBlocks[i], offset);
-            offset += processedBlocks[i].length;
-        }
-        
-        return result;
-    }
-
-    // Шифрование (оптимизированное)
+    // Шифрование данных
     encrypt(inputBuffer) {
         if (!this.key) {
             alert("Сначала сгенерируйте ключ!");
@@ -350,42 +372,42 @@ class ComplexBlockCipher {
         this.stats.timeStart = performance.now();
         
         try {
-        const bytes = new Uint8Array(inputBuffer);
+            const bytes = new Uint8Array(inputBuffer);
             
-            // Используем быстрое разделение на блоки
-        const blocks = this.splitIntoBlocks(bytes);
+            // Разбиваем данные на блоки
+            const blocks = this.splitIntoBlocks(bytes);
             const encryptedBlocks = new Array(blocks.length);
-
-            // Параллельно обрабатываем блоки
-        for (let i = 0; i < blocks.length; i++) {
-            this.stats.steps++;
-                encryptedBlocks[i] = this.transformBlock(blocks[i], this.key, i);
-        }
-
-            // Объединяем блоки и вычисляем контрольную сумму
-        const result = this.combineBlocks(encryptedBlocks);
             
-        this.stats.timeEnd = performance.now();
-        this.stats.memoryUsed = result.length;
-
-        document.getElementById("complexStats").innerHTML = `
-            <h4>Статистика шифрования:</h4>
-            <p>Время: ${(this.stats.timeEnd - this.stats.timeStart).toFixed(2)}ms</p>
-            <p>Память: ${this.stats.memoryUsed} байт</p>
-            <p>Операции: ${this.stats.steps}</p>
+            // Шифруем каждый блок
+            for (let i = 0; i < blocks.length; i++) {
+                this.stats.steps++;
+                encryptedBlocks[i] = this.transformBlock(blocks[i], this.key, i);
+            }
+            
+            // Объединяем блоки и добавляем контрольную сумму
+            const result = this.combineBlocks(encryptedBlocks);
+            
+            this.stats.timeEnd = performance.now();
+            this.stats.memoryUsed = result.length;
+            
+            document.getElementById("complexStats").innerHTML = `
+                <h4>Статистика шифрования:</h4>
+                <p>Время: ${(this.stats.timeEnd - this.stats.timeStart).toFixed(2)}ms</p>
+                <p>Память: ${this.stats.memoryUsed} байт</p>
+                <p>Операции: ${this.stats.steps}</p>
                 <p>Размер исходных данных: ${bytes.length} байт</p>
                 <p>Размер зашифрованных данных: ${result.length} байт</p>
                 <p>Скорость: ${Math.round(bytes.length / ((this.stats.timeEnd - this.stats.timeStart) / 1000) / 1024)} КБ/сек</p>
-        `;
-
-        return result;
+            `;
+            
+            return result;
         } catch (error) {
             console.error("Ошибка при шифровании:", error);
             throw error;
         }
     }
 
-    // Расшифровка (оптимизированная)
+    // Расшифровка данных
     decrypt(inputBuffer) {
         if (!this.key) {
             alert("Сначала сгенерируйте ключ!");
@@ -404,12 +426,12 @@ class ComplexBlockCipher {
             }
             
             // Извлекаем контрольную сумму из последних 4 байт
-            const checksum = new DataView(encryptedBytes.buffer).getUint32(encryptedBytes.length - 4, true);
+            const checksum = new DataView(encryptedBytes.buffer, encryptedBytes.byteOffset, encryptedBytes.byteLength).getUint32(encryptedBytes.length - 4, true);
             
             // Удаляем контрольную сумму из данных
             const encryptedDataWithoutChecksum = encryptedBytes.slice(0, encryptedBytes.length - 4);
             
-            // Эффективно разбиваем на блоки
+            // Разбиваем на блоки
             const encryptedBlocks = [];
             for (let i = 0; i < encryptedDataWithoutChecksum.length; i += this.blockSize) {
                 this.stats.steps++;
@@ -432,12 +454,12 @@ class ComplexBlockCipher {
             
             this.stats.timeEnd = performance.now();
             this.stats.memoryUsed = finalData.length;
-        
-        document.getElementById("complexStats").innerHTML = `
-            <h4>Статистика расшифровки:</h4>
-            <p>Время: ${(this.stats.timeEnd - this.stats.timeStart).toFixed(2)}ms</p>
-            <p>Память: ${this.stats.memoryUsed} байт</p>
-            <p>Операции: ${this.stats.steps}</p>
+            
+            document.getElementById("complexStats").innerHTML = `
+                <h4>Статистика расшифровки:</h4>
+                <p>Время: ${(this.stats.timeEnd - this.stats.timeStart).toFixed(2)}ms</p>
+                <p>Память: ${this.stats.memoryUsed} байт</p>
+                <p>Операции: ${this.stats.steps}</p>
                 <p>Размер зашифрованных данных: ${encryptedBytes.length} байт</p>
                 <p>Размер расшифрованных данных: ${finalData.length} байт</p>
                 <p>Контрольная сумма: ${checksumMatch ? "верна" : "не совпадает!"}</p>
@@ -478,13 +500,13 @@ function encryptComplex() {
     const reader = new FileReader();
     reader.onload = function(event) {
         try {
-        const encryptedData = cipher.encrypt(event.target.result);
-        const encryptedBlob = new Blob([encryptedData], { type: "application/octet-stream" });
-        const url = URL.createObjectURL(encryptedBlob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "enComplex_" + file.name;
-        link.click();
+            const encryptedData = cipher.encrypt(event.target.result);
+            const encryptedBlob = new Blob([encryptedData], { type: "application/octet-stream" });
+            const url = URL.createObjectURL(encryptedBlob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "enComplex_" + file.name;
+            link.click();
         } catch (error) {
             console.error("Ошибка при шифровании:", error);
             alert("Ошибка при шифровании: " + error.message);
@@ -503,13 +525,13 @@ function decryptComplex() {
     const reader = new FileReader();
     reader.onload = function(event) {
         try {
-        const decryptedData = cipher.decrypt(event.target.result);
-        const decryptedBlob = new Blob([decryptedData], { type: "application/octet-stream" });
-        const url = URL.createObjectURL(decryptedBlob);
-        const link = document.createElement("a");
-        link.href = url;
+            const decryptedData = cipher.decrypt(event.target.result);
+            const decryptedBlob = new Blob([decryptedData], { type: "application/octet-stream" });
+            const url = URL.createObjectURL(decryptedBlob);
+            const link = document.createElement("a");
+            link.href = url;
             link.download = "deComplex_" + file.name.replace(/^enComplex_/, "");
-        link.click();
+            link.click();
         } catch (error) {
             console.error("Ошибка при расшифровке:", error);
             alert("Ошибка при расшифровке: " + error.message);
