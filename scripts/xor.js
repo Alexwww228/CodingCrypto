@@ -1,7 +1,5 @@
-// Глобальная переменная для ключа XOR
 let xorKey = null;
 
-// Глобальная переменная для статистики
 window.xorStats = {
     steps: 0,
     timeStart: 0,
@@ -12,7 +10,6 @@ window.xorStats = {
     }
 };
 
-// Сброс статистики перед новыми операциями
 function resetXORStats() {
     window.xorStats = {
         steps: 0,
@@ -25,7 +22,6 @@ function resetXORStats() {
     };
 }
 
-// Функция для генерации случайного ключа XOR заданной длины
 function generateXORKey(length) {
     resetXORStats();
     window.xorStats.timeStart = performance.now();
@@ -54,25 +50,22 @@ function generateXORKey(length) {
         <p>Операции: ${window.xorStats.steps}</p>
     `;
     
-    saveKey(key); // Сохраняем ключ
+    saveKey(key);
     xorKey = key;
     return key;
 }
 
-// Сохранение ключа в localStorage
 function saveKey(key) {
     const keyHex = Array.from(key).map(byte => byte.toString(16).padStart(2, '0')).join(' ');
     localStorage.setItem("xorKey", keyHex);
 }
 
-// Загрузка ключа из localStorage
 function loadKey() {
     const keyHex = localStorage.getItem("xorKey");
     if (!keyHex) return null;
     return new Uint8Array(keyHex.split(' ').map(byte => parseInt(byte, 16)));
 }
 
-// Функция для шифрования и расшифровки с использованием XOR
 function xorEncryptDecrypt(data, key) {
     const result = new Uint8Array(data.length);
     
@@ -81,14 +74,12 @@ function xorEncryptDecrypt(data, key) {
         result[i] = data[i] ^ key[i % key.length];
         window.xorStats.operations.bitwise++;
         
-        // Увеличиваем счетчик шагов каждые 1000 операций для эффективности
         if (i % 1000 === 0) window.xorStats.steps++;
     }
     
     return result;
 }
 
-// Функция для шифрования любого файла
 async function encryptXOR() {
     resetXORStats();
     window.xorStats.timeStart = performance.now();
@@ -111,21 +102,17 @@ async function encryptXOR() {
     }
 
     try {
-        // Читаем файл как ArrayBuffer и преобразуем его в Uint8Array
         const arrayBuffer = await file.arrayBuffer();
         const data = new Uint8Array(arrayBuffer);
         window.xorStats.steps++;
 
-        // Шифруем данные
         const encryptedData = xorEncryptDecrypt(data, xorKey);
         window.xorStats.memoryUsed = encryptedData.byteLength;
         window.xorStats.steps++;
 
-        // Создаем Blob с зашифрованными данными
         const encryptedBlob = new Blob([encryptedData], { type: "application/octet-stream" });
         const url = URL.createObjectURL(encryptedBlob);
 
-        // Обновляем статистику
         window.xorStats.timeEnd = performance.now();
         
         document.getElementById("xorStats").innerHTML = `
@@ -139,7 +126,6 @@ async function encryptXOR() {
             <p>Скорость: ${Math.round(data.length / ((window.xorStats.timeEnd - window.xorStats.timeStart) / 1000) / 1024)} КБ/сек</p>
         `;
 
-        // Создаем ссылку для скачивания файла
         const link = document.createElement("a");
         link.href = url;
         link.download = "enXOR_" + file.name;
@@ -152,7 +138,6 @@ async function encryptXOR() {
     }
 }
 
-// Функция для расшифровки любого файла
 async function decryptXOR() {
     resetXORStats();
     window.xorStats.timeStart = performance.now();
@@ -171,17 +156,14 @@ async function decryptXOR() {
     }
 
     try {
-        // Читаем файл как ArrayBuffer и преобразуем его в Uint8Array
         const arrayBuffer = await file.arrayBuffer();
         const encryptedData = new Uint8Array(arrayBuffer);
         window.xorStats.steps++;
 
-        // Расшифровываем данные
         const decryptedData = xorEncryptDecrypt(encryptedData, xorKey);
         window.xorStats.memoryUsed = decryptedData.byteLength;
         window.xorStats.steps++;
 
-        // Обновляем статистику
         window.xorStats.timeEnd = performance.now();
         
         document.getElementById("xorStats").innerHTML = `
@@ -195,14 +177,12 @@ async function decryptXOR() {
             <p>Скорость: ${Math.round(decryptedData.length / ((window.xorStats.timeEnd - window.xorStats.timeStart) / 1000) / 1024)} КБ/сек</p>
         `;
 
-        // Создаем Blob с расшифрованными данными
         const decryptedBlob = new Blob([decryptedData], { type: file.type || "application/octet-stream" });
         const url = URL.createObjectURL(decryptedBlob);
 
-        // Создаем ссылку для скачивания файла
         const link = document.createElement("a");
         link.href = url;
-        link.download = "deXOR_" + file.name.replace(/^enXOR_/, ''); // Убираем префикс "enXOR_"
+        link.download = file.name.startsWith("enXOR_") ? file.name.substring(6) : "decrypted_" + file.name;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

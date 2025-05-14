@@ -94,6 +94,14 @@ class Blowfish {
 
 // Генерация ключа для Blowfish
 function generateBlowfishKey() {
+    // Инициализация глобальной статистики
+    window.blowfishStats = {
+        timeStart: 0,
+        timeEnd: 0,
+        memoryUsed: 0,
+        operations: 0
+    };
+
     // Initialize the stats object at the start of the function
     const stats = { timeStart: 0, timeEnd: 0, memoryUsed: 0, operations: 0 };
     stats.timeStart = performance.now();
@@ -122,6 +130,14 @@ function generateBlowfishKey() {
         <p>Память: ${stats.memoryUsed} байт</p>
         <p>Операции: ${stats.operations}</p>
     `;
+
+    // Экспортируем статистику для сравнения алгоритмов
+    window.blowfishStats = {
+        timeStart: stats.timeStart,
+        timeEnd: stats.timeEnd,
+        memoryUsed: stats.memoryUsed,
+        operations: stats.operations
+    };
 
     return key;
 }
@@ -157,6 +173,15 @@ async function encryptBlowfish() {
 
     const stats = { timeStart: 0, timeEnd: 0, memoryUsed: 0, operations: 0 };
     stats.timeStart = performance.now();
+    
+    // Проверяем, что статистика инициализирована
+    if (!window.blowfishStats) {
+        window.blowfishStats = {};
+    }
+    window.blowfishStats.timeStart = stats.timeStart;
+    window.blowfishStats.timeEnd = stats.timeEnd;
+    window.blowfishStats.memoryUsed = stats.memoryUsed;
+    window.blowfishStats.operations = stats.operations;
 
     try {
         // Читаем файл как ArrayBuffer и преобразуем его в Uint8Array
@@ -214,6 +239,14 @@ async function encryptBlowfish() {
         stats.timeEnd = performance.now();
         stats.memoryUsed = encryptedBlocks.length;
         stats.operations = paddedData.length / blockSize; // Примерное количество операций
+        
+        // Проверяем, что статистика инициализирована
+        if (!window.blowfishStats) {
+            window.blowfishStats = {};
+        }
+        window.blowfishStats.timeEnd = stats.timeEnd;
+        window.blowfishStats.memoryUsed = stats.memoryUsed;
+        window.blowfishStats.operations = stats.operations;
 
         // Отображение статистики
         document.getElementById("blowfishStats").innerHTML = `
@@ -289,6 +322,19 @@ async function decryptBlowfish() {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
+
+        // Экспортируем статистику для сравнения алгоритмов
+        if (!window.blowfishStats) {
+            window.blowfishStats = {};
+        }
+        stats.timeStart = performance.now();
+        stats.timeEnd = performance.now();
+        stats.memoryUsed = decryptedBlocks.length;
+        stats.operations = decryptedBlocks.length / 8; // Примерное количество операций
+        window.blowfishStats.timeStart = stats.timeStart;
+        window.blowfishStats.timeEnd = stats.timeEnd;
+        window.blowfishStats.memoryUsed = stats.memoryUsed;
+        window.blowfishStats.operations = stats.operations;
     } catch (error) {
         alert("Ошибка при расшифровке файла: " + error.message);
     }

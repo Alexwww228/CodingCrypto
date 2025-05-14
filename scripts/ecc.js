@@ -39,6 +39,14 @@ async function generateECCKeys() {
             <p>Память: ${stats.memoryUsed} байт</p>
             <p>Операции: ${stats.operations}</p>
         `;
+
+        // Экспортируем статистику для сравнения алгоритмов
+        window.eccStats = {
+            timeStart: stats.timeStart,
+            timeEnd: stats.timeEnd,
+            memoryUsed: stats.memoryUsed,
+            operations: stats.operations
+        };
     } catch (error) {
         console.error("Ошибка генерации ключей ECC:", error);
         alert("Ошибка генерации ключей ECC. Проверьте консоль для деталей.");
@@ -129,6 +137,14 @@ async function encryptECC() {
                 <p>Память: ${stats.memoryUsed} байт</p>
                 <p>Операции: ${stats.operations}</p>
             `;
+
+            // Экспортируем статистику для сравнения алгоритмов
+            window.eccStats = {
+                timeStart: stats.timeStart,
+                timeEnd: stats.timeEnd,
+                memoryUsed: stats.memoryUsed,
+                operations: stats.operations
+            };
         } catch (error) {
             console.error("Ошибка шифрования:", error);
             alert("Ошибка шифрования. Проверьте консоль для деталей.");
@@ -211,6 +227,14 @@ async function decryptECC() {
                 <p>Память: ${stats.memoryUsed} байт</p>
                 <p>Операции: ${stats.operations}</p>
             `;
+
+            // Экспортируем статистику для сравнения алгоритмов
+            window.eccStats = {
+                timeStart: stats.timeStart,
+                timeEnd: stats.timeEnd,
+                memoryUsed: stats.memoryUsed,
+                operations: stats.operations
+            };
         } catch (error) {
             console.error("Ошибка расшифровки:", error);
             alert("Ошибка расшифровки. Проверьте консоль для деталей.");

@@ -2,6 +2,14 @@ let aesKey;
 
 // Функция для генерации ключа AES (256 бит)
 async function generateAESKey() {
+    // Инициализация глобальной статистики
+    window.aesStats = {
+        timeStart: 0,
+        timeEnd: 0,
+        memoryUsed: 0,
+        operations: 0
+    };
+    
     const stats = {
         timeStart: performance.now(),
         memoryUsed: 0,
@@ -35,6 +43,14 @@ async function generateAESKey() {
         <p>Память: ${stats.memoryUsed} байт</p>
         <p>Операции: ${stats.operations}</p>
     `;
+    
+    // Экспортируем статистику для сравнения алгоритмов
+    window.aesStats = {
+        timeStart: stats.timeStart,
+        timeEnd: stats.timeEnd,
+        memoryUsed: stats.memoryUsed,
+        operations: stats.operations
+    };
 }
 
 // Функция для шифрования файла с использованием AES-CBC
@@ -96,6 +112,14 @@ async function encryptAES() {
             <p>Память: ${stats.memoryUsed} байт</p>
             <p>Операции: ${stats.operations}</p>
         `;
+        
+        // Экспортируем статистику для сравнения алгоритмов
+        window.aesStats = {
+            timeStart: stats.timeStart,
+            timeEnd: stats.timeEnd,
+            memoryUsed: stats.memoryUsed,
+            operations: stats.operations
+        };
     } catch (error) {
         console.error("Ошибка при шифровании файла:", error);
         alert("Ошибка при шифровании файла: " + error.message);
@@ -163,6 +187,14 @@ async function decryptAES() {
             <p>Память: ${stats.memoryUsed} байт</p>
             <p>Операции: ${stats.operations}</p>
         `;
+        
+        // Экспортируем статистику для сравнения алгоритмов
+        window.aesStats = {
+            timeStart: stats.timeStart,
+            timeEnd: stats.timeEnd,
+            memoryUsed: stats.memoryUsed,
+            operations: stats.operations
+        };
     } catch (error) {
         console.error("Ошибка при расшифровке файла:", error);
         alert("Ошибка при расшифровке файла: " + error.message);

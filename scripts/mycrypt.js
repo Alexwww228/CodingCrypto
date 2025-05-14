@@ -58,7 +58,7 @@ class ComplexBlockCipher {
         this.stats.steps++;
         this.stats.operations.random++;
         
-        this.key = new Uint8Array(32);
+        this.key = new Uint8Array(64);
         crypto.getRandomValues(this.key);
         
         const keyBase64 = btoa(String.fromCharCode(...this.key));
@@ -400,6 +400,9 @@ class ComplexBlockCipher {
                 <p>Скорость: ${Math.round(bytes.length / ((this.stats.timeEnd - this.stats.timeStart) / 1000) / 1024)} КБ/сек</p>
             `;
             
+            // Экспортируем статистику для сравнения алгоритмов
+            this.logStats();
+            
             return result;
         } catch (error) {
             console.error("Ошибка при шифровании:", error);
@@ -466,6 +469,9 @@ class ComplexBlockCipher {
                 <p>Скорость: ${Math.round(finalData.length / ((this.stats.timeEnd - this.stats.timeStart) / 1000) / 1024)} КБ/сек</p>
             `;
             
+            // Экспортируем статистику для сравнения алгоритмов
+            this.logStats();
+            
             return finalData;
         } catch (error) {
             console.error("Ошибка при расшифровке:", error);
@@ -481,6 +487,15 @@ class ComplexBlockCipher {
             memoryUsed: `${this.stats.memoryUsed} bytes`,
             operations: this.stats.operations
         });
+        
+        // Экспортируем статистику для сравнения алгоритмов
+        window.complexStats = {
+            timeStart: this.stats.timeStart,
+            timeEnd: this.stats.timeEnd,
+            steps: this.stats.steps,
+            memoryUsed: this.stats.memoryUsed,
+            operations: this.stats.operations
+        };
     }
 }
 
